@@ -72,9 +72,9 @@
     btnDiff.disabled = false;
     btnRun.disabled = false;
 
-    const statusMsg = roboStatus(result.code);
+    const statusMsg = roboStatus(result.code, result.output);
     setStatus(statusMsg);
-    exitCodeExplain.textContent = `Exit code ${result.code}: ${roboExitExplain(result.code)}`;
+    exitCodeExplain.textContent = `Exit code ${result.code}: ${roboExitExplain(result.code, result.output)}`;
 
     // Show the sync command that would be run
     syncCmdOutput.textContent = `robocopy "${source}" "${target}" ${COPY_FLAGS}`;
@@ -144,17 +144,25 @@
     statusEl.textContent = msg;
   }
 
-  function roboStatus(code) {
-    if (code === 0) return 'In sync — no changes needed.';
-    if (code === 1) return 'Ready to copy — new/updated files found.';
+  // Change markers robocopy emits in /L dry-run output
+  const CHANGE_RE = /\b(New File|New Dir|Newer|Older|\*EXTRA|Tweaked|Attrib|Lonely)\b/i;
+
+  function roboStatus(code, output = '') {
+    // Exit code 0 with /L can be unreliable when the destination doesn't exist
+    // yet — scan the output for change markers as a fallback.
+    const hasChanges = code !== 0 || CHANGE_RE.test(output);
+    if (!hasChanges) return 'In sync — no changes needed.';
     if (code === 2) return 'Extra files in destination detected (would be deleted by /MIR).';
     if (code === 3) return 'New/updated files found, plus extra files in destination.';
     if (code === 5) return 'Some files were mismatched.';
     if (code >= 8) return `Error (exit code ${code}). Check output for details.`;
-    return `Finished (exit code ${code}).`;
+    return 'Changes detected — ready to copy.';
   }
 
-  function roboExitExplain(code) {
+  function roboExitExplain(code, output = '') {
+    if (code === 0 && CHANGE_RE.test(output)) {
+      return 'Robocopy reported exit code 0 but the output contains pending changes. This can happen when the destination directory does not yet exist.';
+    }
     const table = {
       0: 'No files were copied. Source and destination are identical.',
       1: 'One or more files were copied successfully.',
