@@ -63,12 +63,41 @@ function spawnRobocopy(flags, source, target) {
   });
 }
 
-// Dry-run diff — /L means no files are actually copied
+// Dry-run diff — one-shot, used for the initial preview
 ipcMain.handle('run-robocopy', async (event, { source, target }) => {
-  return spawnRobocopy('/MIR /L /R:1 /W:1 /NJH /NJS', source, target);
+  return spawnRobocopy('/MIR /L /R:0 /W:0 /NJH /NJS', source, target);
 });
 
-// Live copy — full MIR with retry suppressed for speed
+// Live copy — unbuffered, zero-retry for fastest delivery on RoCEv2 fabric
 ipcMain.handle('run-robocopy-copy', async (event, { source, target }) => {
-  return spawnRobocopy('/MIR /Z /MT:16 /R:3 /W:1 /NJH /NJS', source, target);
+  return spawnRobocopy('/MIR /E /Z /MT:32 /J /R:0 /W:0 /TBD /NP', source, target);
+});
+
+// Persistent monitor — stays alive, re-runs diff on 1+ change or every minute.
+// Killed and restarted whenever source/target change.
+let monitorProc = null;
+
+ipcMain.handle('start-monitor', async (event, { source, target }) => {
+  if (monitorProc) { monitorProc.kill(); monitorProc = null; }
+  const args = [source, target, '/MIR', '/L', '/MON:1', '/MOT:1', '/NJH', '/NJS'];
+  monitorProc = spawn('robocopy', args);
+  monitorProc.stdout.on('data', (data) => {
+    if (mainWindow && !mainWindow.isDestroyed())
+      mainWindow.webContents.send('monitor-output', data.toString());
+  });
+  monitorProc.stderr.on('data', (data) => {
+    if (mainWindow && !mainWindow.isDestroyed())
+      mainWindow.webContents.send('monitor-output', data.toString());
+  });
+  monitorProc.on('close', (code) => {
+    monitorProc = null;
+    if (mainWindow && !mainWindow.isDestroyed())
+      mainWindow.webContents.send('monitor-stopped', code);
+  });
+  return { started: true };
+});
+
+ipcMain.handle('stop-monitor', async () => {
+  if (monitorProc) { monitorProc.kill(); monitorProc = null; }
+  return { stopped: true };
 });

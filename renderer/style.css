@@ -192,3 +192,29 @@ pre {
   color: #00d4ff;
   max-height: 80px;
 }
+
+.cmd-block {
+  margin-bottom: 20px;
+}
+
+.flag-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 6px;
+  font-size: 0.76rem;
+}
+
+.flag-tag {
+  font-family: 'Consolas', 'Courier New', monospace;
+  color: #00d4ff;
+  white-space: nowrap;
+  padding: 2px 12px 2px 0;
+  vertical-align: top;
+  font-weight: bold;
+}
+
+.flag-desc {
+  color: #777;
+  padding: 2px 0;
+  line-height: 1.4;
+}
