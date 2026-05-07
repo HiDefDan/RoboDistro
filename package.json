@@ -1,0 +1,15 @@
+{
+  "name": "robodistro-electron",
+  "version": "0.1.0",
+  "description": "Electron app for high-performance robocopy management",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.2.3"
+  },
+  "dependencies": {}
+}

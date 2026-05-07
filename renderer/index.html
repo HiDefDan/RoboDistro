@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoboDistro</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <h1>RoboDistro</h1>
+
+    <section class="paths">
+      <div class="field">
+        <label for="source">Source</label>
+        <div class="path-row">
+          <input type="text" id="source" placeholder="C:\Media\Source" readonly />
+          <button id="browse-source">Browse…</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="target">Target (UNC path)</label>
+        <input type="text" id="target" placeholder="\\SERVER\Share\Target" />
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="btn-diff" disabled>Preview Diff</button>
+      <button id="btn-run" disabled>Run Copy</button>
+      <span id="status"></span>
+    </section>
+
+    <section class="preview" id="preview-section" hidden>
+      <h2>Diff Preview</h2>
+      <pre id="diff-output"></pre>
+    </section>
+
+    <section class="output" id="output-section" hidden>
+      <h2>Output</h2>
+      <pre id="live-output"></pre>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
