@@ -26,15 +26,36 @@
       </div>
     </section>
 
+    <div id="path-warning" class="warning" hidden></div>
+
     <section class="actions">
       <button id="btn-diff" disabled>Preview Diff</button>
       <button id="btn-run" disabled>Run Copy</button>
+      <label class="toggle-label">
+        <input type="checkbox" id="chk-verbose" />
+        Explain output
+      </label>
       <span id="status"></span>
     </section>
 
     <section class="preview" id="preview-section" hidden>
       <h2>Diff Preview</h2>
+      <div id="verbose-legend" class="legend" hidden>
+        <table>
+          <tr><td class="tag extra">*EXTRA</td><td>Exists in destination only — <strong>will be deleted</strong> by /MIR</td></tr>
+          <tr><td class="tag new">New File</td><td>Exists in source only — will be copied</td></tr>
+          <tr><td class="tag newer">Newer</td><td>Source is newer — will overwrite destination</td></tr>
+          <tr><td class="tag older">Older</td><td>Source is older — will overwrite destination</td></tr>
+          <tr><td class="tag same">Same</td><td>Identical — will not be copied</td></tr>
+        </table>
+        <div id="exit-code-explain" class="exit-explain"></div>
+      </div>
       <pre id="diff-output"></pre>
+    </section>
+
+    <section class="sync-cmd" id="sync-cmd-section" hidden>
+      <h2>Sync Command</h2>
+      <pre id="sync-cmd-output"></pre>
     </section>
 
     <section class="output" id="output-section" hidden>
