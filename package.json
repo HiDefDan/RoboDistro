@@ -4,11 +4,14 @@
   "description": "Electron app for high-performance robocopy management",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dev": "cross-env NODE_ENV=development electron ."
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^42.0.0"
+    "cross-env": "^10.1.0",
+    "electron": "^42.0.0",
+    "electron-reload": "^2.0.0-alpha.1"
   }
 }

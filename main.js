@@ -2,6 +2,16 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
 
+// Hot-reload in development: renderer changes reload the window,
+// main process changes restart the app automatically.
+if (process.env.NODE_ENV === 'development') {
+  require('electron-reload')(__dirname, {
+    electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
+    hardResetMethod: 'exit',
+    watchRenderer: true,
+  });
+}
+
 let mainWindow;
 
 function createWindow() {
