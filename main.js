@@ -21,10 +21,12 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'renderer', 'preload.js'),
       nodeIntegration: false,
-      contextIsolation: true
+      contextIsolation: true,
+      sandbox: false
     }
   });
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+  if (process.env.NODE_ENV === 'development') mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);
