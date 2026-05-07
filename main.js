@@ -31,11 +31,13 @@ ipcMain.handle('choose-directory', async () => {
   return result.filePaths[0];
 });
 
-// Shared helper — spawns robocopy and streams output back to the renderer
+// Shared helper — spawns robocopy and streams output back to the renderer.
+// Args are passed as an array so paths with spaces are handled correctly
+// without any shell quoting.
 function spawnRobocopy(flags, source, target) {
   return new Promise((resolve) => {
-    const cmd = `robocopy "${source}" "${target}" ${flags}`;
-    const proc = spawn('cmd', ['/c', cmd]);
+    const args = [source, target, ...flags.split(' ').filter(Boolean)];
+    const proc = spawn('robocopy', args);
     let output = '';
     proc.stdout.on('data', (data) => {
       mainWindow.webContents.send('robocopy-output', data.toString());
